@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="org.ehcache:jcache:1.0.1" type="repository">
+    <properties maven-id="org.ehcache:jcache:1.0.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ehcache/jcache/1.0.1/jcache-1.0.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/2.8.3/ehcache-2.8.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/javax/cache/cache-api/1.0.0/cache-api-1.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
