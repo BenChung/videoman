@@ -6,6 +6,7 @@ import com.calendarfx.model.Entry;
 import com.calendarfx.view.DayView;
 import com.calendarfx.view.TimeScaleView;
 import com.calendarfx.view.WeekDayHeaderView;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Control;
@@ -69,8 +70,15 @@ public class EventPane extends Control {
         linkDisplay = new LinkDisplay();
         LinkDisplayManager.getInstance().setDisplay(linkDisplay);
 
-        eventView.calendarsProperty().addListener((bnd, nv, ov) -> {
-            LinkDisplayManager.getInstance().getDisplay().clearLinks();
+        eventView.calendarsProperty().addListener((InvalidationListener) (obs) -> {
+            LinkDisplayManager.getInstance().getDisplay().clearLinks(Lecture.class);
+        });
+        recordingView.calendarsProperty().addListener((InvalidationListener) (obs) -> {
+            LinkDisplayManager.getInstance().getDisplay().clearLinks(Recording.class);
+        });
+        eventView.dateProperty().addListener((bnd, nv, ov) -> {
+            LinkDisplayManager.getInstance().getDisplay().clearLinks(Lecture.class);
+            LinkDisplayManager.getInstance().getDisplay().clearLinks(Recording.class);
         });
     }
 

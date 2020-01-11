@@ -48,9 +48,14 @@ public class Lecture implements Bindable {
     }
 
     @Override
-    public void setBinding(Object other) {
-        if (!(other instanceof Recording))
+    public void setBinding(Bindable other) {
+        if (!(other instanceof Recording) && (other != null))
             throw new RuntimeException("Tried to bind a lecture to a non-recording");
         this.recording = (Recording)other;
+    }
+
+    @Override
+    public Bindable getBound() {
+        return this.recording;
     }
 }

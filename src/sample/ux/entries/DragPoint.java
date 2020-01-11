@@ -1,25 +1,23 @@
 package sample.ux.entries;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import sample.model.Bindable;
 import sample.ux.dragging.DragLink;
 import sample.ux.dragging.LinkDisplayManager;
 
 public class DragPoint extends Control {
     public final double radius = 10.0;
     public final double border = 2.0;
-    public final Object boundObj;
+    public final Bindable boundObj;
 
     // logic:
     // if the dragpoint is bound AND has a link, then it is fully visible
@@ -27,34 +25,24 @@ public class DragPoint extends Control {
     // if the dragpoint is not bound BUT is linked, then inconsistent state
     // if the dragpoint is not bound AND is not linked, then it is ready
 
-    public ObservableValue<DragPoint> boundProperty() { return bound; }
+    public ObservableValue<DragPoint> connectedProperty() { return connected; }
 
-    public DragPoint getBound() {
-        return bound.get();
+    public DragPoint getConnected() {
+        return connected.get();
     }
 
-    public void setBound(DragPoint bound) {
-        this.bound.set(bound);
+    public void setConnected(DragPoint connected) {
+        this.connected.set(connected);
     }
 
-    private ObjectProperty<DragPoint> bound;
-
-    public DragLink getLink() {
-        return link;
-    }
-
-    public void setLink(DragLink link) {
-        this.link = link;
-    }
-
-    private DragLink link;
+    private ObjectProperty<DragPoint> connected = new SimpleObjectProperty<>();
 
     ObjectBinding<Point2D> centerBinding;
     public ObservableValue<Point2D> centerBindingProperty() {
         return centerBinding;
     }
 
-    public DragPoint(Object bound) {
+    public DragPoint(Bindable bound) {
         centerBinding = Bindings.createObjectBinding(() -> {
                     var bounds = localToScene(boundsInLocalProperty().get());
                     return new Point2D(bounds.getCenterX(), bounds.getCenterY()); },

@@ -7,6 +7,8 @@ import javafx.scene.control.Control;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import sample.model.Bindable;
+import sample.ux.dragging.DragLink;
+import sample.ux.dragging.LinkDisplay;
 import sample.ux.dragging.LinkDisplayManager;
 
 public class BindableEntryViewSkin extends DayEntryViewSkin {
@@ -27,14 +29,20 @@ public class BindableEntryViewSkin extends DayEntryViewSkin {
             throw new RuntimeException("Invalid bound object for date display");
         }
         Bindable object = (Bindable)userObject;
-        this.dragPoint = new DragPoint(userObject);
-        dragPoint.boundProperty().addListener((bnd, nv, ov) -> {
+        this.dragPoint = new DragPoint(object);
+        this.dragPoint.setConnected(LinkDisplayManager.getInstance().getDisplay().getPoint(object.getBound()));
+        dragPoint.connectedProperty().addListener((bnd, nv, ov) -> {
             if (nv != null)
-                object.setBinding(nv.getBound().boundObj);
+                object.setBinding(nv.boundObj);
             else
                 object.setBinding(null);
         });
-        LinkDisplayManager.getInstance().getDisplay().registerPoint(userObject, this.dragPoint);
+
+        LinkDisplayManager.getInstance().getDisplay().registerPoint(object, this.dragPoint);
+        DragPoint other = LinkDisplayManager.getInstance().getDisplay().getPoint(dragPoint.boundObj.getBound());
+        if (other != null && !LinkDisplayManager.getInstance().getDisplay().hasLink(dragPoint, other)) {
+            LinkDisplayManager.getInstance().getDisplay().getLinks().put(dragPoint, other);
+        }
 
         this.entryLayout = new BorderPane();
         entryLayout.setCenter(infoPane);
@@ -55,4 +63,6 @@ public class BindableEntryViewSkin extends DayEntryViewSkin {
         super.layoutChildren(contentX, contentY, contentWidth, contentHeight);
         entryLayout.requestLayout();
     }
+
+
 }

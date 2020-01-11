@@ -7,24 +7,32 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import sample.model.Bindable;
 import sample.ux.entries.DragPoint;
 import sample.model.Lecture;
 import sample.model.Recording;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 // the job of the display is to enable the creation/modification of links
 // and the restoration of existing links
 public class LinkDisplay<T,V> extends Control {
 
     // dragpoint management
-    HashMap<Object, DragPoint> points = new HashMap<>();
-    public void registerPoint(Object ref, DragPoint point) {
+    HashMap<Bindable, DragPoint> points = new HashMap<>();
+    public void registerPoint(Bindable ref, DragPoint point) {
         // remember the association
         points.put(ref, point);
+
+
     }
-    public void unregisterPoint(Object ref) {
+    public void unregisterPoint(Bindable ref) {
         points.remove(ref);
+    }
+
+    public DragPoint getPoint(Bindable ref) {
+        return points.get(ref);
     }
 
     public LinkDisplay() {
@@ -78,6 +86,10 @@ public class LinkDisplay<T,V> extends Control {
                 currentLink.startProperty().unbind();
             }
             links.remove(currentLink.getStartPoint(), currentLink.getEndPoint());
+            currentLink.getStartPoint().setConnected(null);
+            currentLink.getEndPoint().setConnected(null);
+            currentLink.getStartPoint().boundObj.setBinding(null);
+            currentLink.getEndPoint().boundObj.setBinding(null);
             linkedPoints.remove(currentLink.getStartPoint());
             linkedPoints.remove(currentLink.getEndPoint());
         } else {
@@ -135,6 +147,10 @@ public class LinkDisplay<T,V> extends Control {
                 DragLink link = lookupLinkedPoint(dragPoint);
                 links.remove(link.getStartPoint(), link.getEndPoint());
             }
+            dragPoint.setConnected(source);
+            source.setConnected(dragPoint);
+            dragPoint.boundObj.setBinding(source.boundObj);
+            source.boundObj.setBinding(dragPoint.boundObj);
             links.put(source, dragPoint);
         }
     }
@@ -144,17 +160,20 @@ public class LinkDisplay<T,V> extends Control {
                 (source.boundObj instanceof Recording && target.boundObj instanceof Lecture);
     }
 
-    public void visibilityChanged(DragPoint dragPoint, Boolean visible) {
-        if (visible) {
-            // a previously invisible link is now visible
-            System.out.println("visible");
-        } else {
-            // a previously visible link is now invisible
-            System.out.println("visible");
+    // invalidate existing links, to be recreated as events get loaded in
+    public void clearLinks(Class<?> pointType) {
+        LinkedList<Bindable> toRemove = new LinkedList<>();
+        for (Bindable p : points.keySet()) {
+            if (pointType.isAssignableFrom(p.getClass()))
+                toRemove.add(p);
         }
+        toRemove.forEach(points::remove);
+
+        links.clear();
+        getChildren().clear();
     }
 
-    public void clearLinks() {
-
+    public boolean hasLink(DragPoint dragPoint, DragPoint other) {
+        return links.containsKey(dragPoint) || links.containsKey(other);
     }
 }

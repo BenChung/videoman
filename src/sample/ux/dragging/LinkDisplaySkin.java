@@ -4,6 +4,8 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.control.SkinBase;
 import sample.ux.entries.DragPoint;
 
+import java.util.HashMap;
+
 public class LinkDisplaySkin extends SkinBase<LinkDisplay> {
     protected LinkDisplaySkin(LinkDisplay linkDisplay) {
         super(linkDisplay);
@@ -25,16 +27,17 @@ public class LinkDisplaySkin extends SkinBase<LinkDisplay> {
         }
     }
 
-    private void addLink(DragPoint key, DragPoint valueAdded) {
-        var points = getSkinnable().points;
-        DragPoint source = points.get(key.boundObj);
-        DragPoint target = points.get(valueAdded.boundObj);
+    private void addLink(Object key, Object added) {
+        addLink((DragPoint)key, (DragPoint)added);
+    }
+
+    private void addLink(DragPoint source, DragPoint target) {
         DragLink link = new DragLink();
         link.startProperty().bind(source.centerBindingProperty());
         link.endProperty().bind(target.centerBindingProperty());
-        getSkinnable().linkPoint(key, link);
+        getSkinnable().linkPoint(source, link);
         getSkinnable().linkPoint(target, link);
-        link.setLinked(key, target);
+        link.setLinked(source, target);
         getChildren().add(link);
     }
 }

@@ -1,5 +1,6 @@
 package sample.model;
 
 public interface Bindable {
-    void setBinding(Object other);
+    void setBinding(Bindable other);
+    Bindable getBound();
 }

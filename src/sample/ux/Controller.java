@@ -15,6 +15,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import sample.model.*;
 
 import java.io.FileInputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -70,7 +71,7 @@ public class Controller {
         roomSelect.valueProperty().addListener((bnd, ov, nv) -> {
             if (nv == null)
                 return;
-            var locs = loadedEvent.get().getLectures().stream().filter(x -> x.getLocation() == nv)
+            List<Lecture> locs = loadedEvent.get().getLectures().stream().filter(x -> x.getLocation() == nv)
                     .collect(Collectors.toList());
             events.showEvents(locs);
         });
@@ -79,7 +80,7 @@ public class Controller {
         deviceSelect.valueProperty().addListener((bnd, ov, nv) -> {
             if (nv == null)
                 return;
-            var locs = loadedEvent.get().getRecordings().stream().filter(x -> x.getDevice() == nv)
+            List<Recording> locs = loadedEvent.get().getRecordings().stream().filter(x -> x.getDevice() == nv)
                     .collect(Collectors.toList());
             events.showRecordings(locs);
         });
@@ -145,6 +146,7 @@ public class Controller {
             loadedEvent.set(new Event(lectures, recordings, locations, authors, devices));
             fis.close();
         } catch (Exception e) {
+            throw new RuntimeException(e);
 
         }
     }
