@@ -7,6 +7,8 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import sample.model.Bindable;
 import sample.ux.entries.DragPoint;
 import sample.model.Lecture;
@@ -17,26 +19,26 @@ import java.util.LinkedList;
 
 // the job of the display is to enable the creation/modification of links
 // and the restoration of existing links
-public class LinkDisplay<T,V> extends Control {
+public class LinkDisplay extends Control {
+    public DualHashBidiMap<Lecture, Recording> linkMap; // here temporarily
+
+    public LinkDisplay(DualHashBidiMap<Lecture, Recording> mapping) {
+        this.linkMap = mapping;
+        setMouseTransparent(true);
+    }
 
     // dragpoint management
-    HashMap<Bindable, DragPoint> points = new HashMap<>();
-    public void registerPoint(Bindable ref, DragPoint point) {
+    HashMap<Object, DragPoint> points = new HashMap<>();
+    public void registerPoint(Object ref, DragPoint point) {
         // remember the association
         points.put(ref, point);
-
-
     }
-    public void unregisterPoint(Bindable ref) {
+    public void unregisterPoint(Object ref) {
         points.remove(ref);
     }
 
-    public DragPoint getPoint(Bindable ref) {
+    public DragPoint getPoint(Object ref) {
         return points.get(ref);
-    }
-
-    public LinkDisplay() {
-        setMouseTransparent(true);
     }
 
     public void showLink(DragLink link) {
@@ -72,6 +74,14 @@ public class LinkDisplay<T,V> extends Control {
         linkedPoints.remove(point);
     }
 
+    private void clearLink(DragLink toClear) {
+        links.remove(toClear.getStartPoint(), toClear.getEndPoint());
+        toClear.getStartPoint().setConnected(null);
+        toClear.getEndPoint().setConnected(null);
+        linkedPoints.remove(toClear.getStartPoint());
+        linkedPoints.remove(toClear.getEndPoint());
+    }
+
     // drag and drop
     DragLink currentLink = null; DragPoint source = null; DragPoint snapTarget = null; boolean isEndPoint = true;
     public void startDrag(DragPoint dragPoint, MouseEvent mouseEvent) {
@@ -85,13 +95,7 @@ public class LinkDisplay<T,V> extends Control {
                 source = currentLink.getEndPoint();
                 currentLink.startProperty().unbind();
             }
-            links.remove(currentLink.getStartPoint(), currentLink.getEndPoint());
-            currentLink.getStartPoint().setConnected(null);
-            currentLink.getEndPoint().setConnected(null);
-            currentLink.getStartPoint().boundObj.setBinding(null);
-            currentLink.getEndPoint().boundObj.setBinding(null);
-            linkedPoints.remove(currentLink.getStartPoint());
-            linkedPoints.remove(currentLink.getEndPoint());
+            clearLink(currentLink);
         } else {
             source = dragPoint;
             isEndPoint = true;
@@ -147,10 +151,12 @@ public class LinkDisplay<T,V> extends Control {
                 DragLink link = lookupLinkedPoint(dragPoint);
                 links.remove(link.getStartPoint(), link.getEndPoint());
             }
+            if (dragPoint.getConnected() != null)
+                dragPoint.getConnected().setConnected(null);
+            if (source.getConnected() != null)
+                source.getConnected().setConnected(null);
             dragPoint.setConnected(source);
             source.setConnected(dragPoint);
-            dragPoint.boundObj.setBinding(source.boundObj);
-            source.boundObj.setBinding(dragPoint.boundObj);
             links.put(source, dragPoint);
         }
     }
@@ -162,8 +168,8 @@ public class LinkDisplay<T,V> extends Control {
 
     // invalidate existing links, to be recreated as events get loaded in
     public void clearLinks(Class<?> pointType) {
-        LinkedList<Bindable> toRemove = new LinkedList<>();
-        for (Bindable p : points.keySet()) {
+        LinkedList<Object> toRemove = new LinkedList<>();
+        for (Object p : points.keySet()) {
             if (pointType.isAssignableFrom(p.getClass()))
                 toRemove.add(p);
         }

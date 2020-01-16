@@ -7,6 +7,8 @@ import javafx.scene.control.Control;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import sample.model.Bindable;
+import sample.model.Lecture;
+import sample.model.Recording;
 import sample.ux.dragging.DragLink;
 import sample.ux.dragging.LinkDisplay;
 import sample.ux.dragging.LinkDisplayManager;
@@ -25,23 +27,40 @@ public class BindableEntryViewSkin extends DayEntryViewSkin {
         infoPane.getChildren().addAll(titleLabel, startTimeLabel);
 
         Object userObject = getEntry().getUserObject();
-        if (!(userObject instanceof Bindable)) {
-            throw new RuntimeException("Invalid bound object for date display");
+
+        this.dragPoint = new DragPoint(userObject);
+        LinkDisplay display = LinkDisplayManager.getInstance().getDisplay();
+        Object opposite = null;
+        if (userObject instanceof Lecture) {
+            opposite = display.linkMap.get(userObject);
+        } else if (userObject instanceof Recording) {
+            opposite = display.linkMap.getKey(userObject);
+        } else {
+            throw new RuntimeException("Invalid mapped object");
         }
-        Bindable object = (Bindable)userObject;
-        this.dragPoint = new DragPoint(object);
-        this.dragPoint.setConnected(LinkDisplayManager.getInstance().getDisplay().getPoint(object.getBound()));
-        dragPoint.connectedProperty().addListener((bnd, nv, ov) -> {
-            if (nv != null)
-                object.setBinding(nv.boundObj);
-            else
-                object.setBinding(null);
+
+        this.dragPoint.setConnected(display.getPoint(opposite));
+        dragPoint.connectedProperty().addListener((bnd, ov, nv) -> {
+            if (nv != null) {
+                if (userObject instanceof Lecture && nv.boundObj instanceof Recording) {
+                    display.linkMap.put((Lecture)userObject, (Recording)nv.boundObj);
+                }
+                if (userObject instanceof Recording && nv.boundObj instanceof Lecture) {
+                    display.linkMap.put((Lecture)nv.boundObj, (Recording)userObject);
+                }
+            } else {
+                if (userObject instanceof Lecture) {
+                    display.linkMap.remove(userObject);
+                } else {
+                    display.linkMap.removeValue(userObject);
+                }
+            }
         });
 
-        LinkDisplayManager.getInstance().getDisplay().registerPoint(object, this.dragPoint);
-        DragPoint other = LinkDisplayManager.getInstance().getDisplay().getPoint(dragPoint.boundObj.getBound());
-        if (other != null && !LinkDisplayManager.getInstance().getDisplay().hasLink(dragPoint, other)) {
-            LinkDisplayManager.getInstance().getDisplay().getLinks().put(dragPoint, other);
+        display.registerPoint(userObject, this.dragPoint);
+        DragPoint other = display.getPoint(opposite);
+        if (other != null && !display.hasLink(dragPoint, other)) {
+            display.getLinks().put(dragPoint, other);
         }
 
         this.entryLayout = new BorderPane();

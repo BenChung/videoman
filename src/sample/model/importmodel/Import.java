@@ -1,5 +1,7 @@
 package sample.model.importmodel;
 
+import java.io.*;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -10,6 +12,5 @@ public class Import {
     public List<Batch> getBatches() {
         return batches;
     }
-
     List<Batch> batches;
 }

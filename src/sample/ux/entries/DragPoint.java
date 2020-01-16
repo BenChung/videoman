@@ -17,7 +17,7 @@ import sample.ux.dragging.LinkDisplayManager;
 public class DragPoint extends Control {
     public final double radius = 10.0;
     public final double border = 2.0;
-    public final Bindable boundObj;
+    public final Object boundObj;
 
     // logic:
     // if the dragpoint is bound AND has a link, then it is fully visible
@@ -42,7 +42,7 @@ public class DragPoint extends Control {
         return centerBinding;
     }
 
-    public DragPoint(Bindable bound) {
+    public DragPoint(Object bound) {
         centerBinding = Bindings.createObjectBinding(() -> {
                     var bounds = localToScene(boundsInLocalProperty().get());
                     return new Point2D(bounds.getCenterX(), bounds.getCenterY()); },

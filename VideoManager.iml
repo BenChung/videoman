@@ -13,5 +13,6 @@
     <orderEntry type="library" name="org.ehcache:jcache:1.0.1" level="project" />
     <orderEntry type="library" name="org.fxmisc.easybind:easybind:1.0.3" level="project" />
     <orderEntry type="library" name="org.reactfx:reactfx:2.0-M5" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-collections4:4.1" level="project" />
   </component>
 </module>

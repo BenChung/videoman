@@ -14,6 +14,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import org.fxmisc.easybind.EasyBind;
 import sample.model.Event;
 import sample.model.Lecture;
@@ -65,9 +66,14 @@ public class EventPaneSkin extends SkinBase<EventPane> {
         row0.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
         RowConstraints row1 = new RowConstraints();
-        row1.setVgrow(Priority.ALWAYS);
+        row1.setVgrow(Priority.NEVER);
         row1.setFillHeight(true);
         row1.setPrefHeight(Region.USE_COMPUTED_SIZE);
+
+        RowConstraints row2 = new RowConstraints();
+        row2.setVgrow(Priority.ALWAYS);
+        row2.setFillHeight(true);
+        row2.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
         ColumnConstraints col0 = new ColumnConstraints();
         col0.setHgrow(Priority.NEVER);
@@ -89,15 +95,28 @@ public class EventPaneSkin extends SkinBase<EventPane> {
         col3.setFillWidth(true);
         col3.setPrefWidth(Region.USE_COMPUTED_SIZE);
 
+        HBox deviceSelect = new HBox(4);
+        Text devText = new Text("Device: ");
+        deviceSelect.getChildren().add(devText);
+        deviceSelect.getChildren().add(eventPane.getDeviceSelect());
+
+        HBox roomSelect = new HBox(4);
+        Text roomText = new Text("Room: ");
+        roomSelect.getChildren().add(roomText);
+        roomSelect.getChildren().add(eventPane.getRoomSelect());
+
+
         gridPane = new GridPane();
-        gridPane.getRowConstraints().setAll(row0, row1);
+        gridPane.getRowConstraints().setAll(row0, row1, row2);
         gridPane.getColumnConstraints().setAll(col0, col1, col2, col3);
-        gridPane.add(eventPane.getWeekDayHeader(), 0,0);
+        gridPane.add(deviceSelect, 1, 0);
+        gridPane.add(roomSelect, 3, 0);
+        gridPane.add(eventPane.getWeekDayHeader(), 0,1);
         GridPane.setColumnSpan(eventPane.getWeekDayHeader(), 4);
-        gridPane.add(timeScaleScrollPane, 0, 1);
-        gridPane.add(recordingViewScrollPane, 1, 1);
-        gridPane.add(separator, 2, 1);
-        gridPane.add(eventViewScrollPane, 3, 1);
+        gridPane.add(timeScaleScrollPane, 0, 2);
+        gridPane.add(recordingViewScrollPane, 1, 2);
+        gridPane.add(separator, 2, 2);
+        gridPane.add(eventViewScrollPane, 3, 2);
 
         stackPane = new StackPane();
         stackPane.getChildren().addAll(gridPane, eventPane.getLinkDisplay());
