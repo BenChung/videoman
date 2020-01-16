@@ -6,14 +6,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sample.ux.Controller;
 import sample.ux.prefs.PreferencesControl;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        Parent root = loader.load();
+
+        primaryStage.setTitle("No Event");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
     }

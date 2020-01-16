@@ -10,8 +10,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import sample.model.Bindable;
-import sample.ux.dragging.DragLink;
 import sample.ux.dragging.LinkDisplayManager;
 
 public class DragPoint extends Control {

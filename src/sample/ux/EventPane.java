@@ -10,10 +10,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SkinBase;
+import javafx.scene.control.*;
 import javafx.util.StringConverter;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import sample.model.*;
@@ -22,7 +19,6 @@ import sample.ux.dragging.LinkDisplayManager;
 import sample.ux.entries.BindableEntry;
 
 import java.time.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +69,9 @@ public class EventPane extends Control {
         return event;
     }
 
+    Button nextButton = new Button(">");
+    Button prevButton = new Button("<");
+
 
     public EventPane() {
         CalendarUtils.bindPartial(timeScaleView, eventView);
@@ -100,6 +99,9 @@ public class EventPane extends Control {
             LinkDisplayManager.getInstance().getDisplay().clearLinks(Lecture.class);
             LinkDisplayManager.getInstance().getDisplay().clearLinks(Recording.class);
         });
+
+        nextButton.setOnAction(e -> { timeScaleView.setDate(timeScaleView.getDate().plusWeeks(1));});
+        prevButton.setOnAction(e -> { timeScaleView.setDate(timeScaleView.getDate().minusWeeks(1));});
 
 
         roomSelect.setConverter(new StringConverter<Location>() {

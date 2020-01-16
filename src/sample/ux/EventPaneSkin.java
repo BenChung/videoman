@@ -58,6 +58,10 @@ public class EventPaneSkin extends SkinBase<EventPane> {
             timeScaleView.setDate(x.getDate());
         });
 
+        HBox weekButtons = new HBox(2);
+        weekButtons.getChildren().add(eventPane.prevButton);
+        weekButtons.getChildren().add(eventPane.nextButton);
+
         separator = new Separator(Orientation.VERTICAL);
 
         RowConstraints row0 = new RowConstraints();
@@ -109,6 +113,7 @@ public class EventPaneSkin extends SkinBase<EventPane> {
         gridPane = new GridPane();
         gridPane.getRowConstraints().setAll(row0, row1, row2);
         gridPane.getColumnConstraints().setAll(col0, col1, col2, col3);
+        gridPane.add(weekButtons, 0, 0);
         gridPane.add(deviceSelect, 1, 0);
         gridPane.add(roomSelect, 3, 0);
         gridPane.add(eventPane.getWeekDayHeader(), 0,1);

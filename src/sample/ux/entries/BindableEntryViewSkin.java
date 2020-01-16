@@ -6,10 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Control;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import sample.model.Bindable;
 import sample.model.Lecture;
 import sample.model.Recording;
-import sample.ux.dragging.DragLink;
 import sample.ux.dragging.LinkDisplay;
 import sample.ux.dragging.LinkDisplayManager;
 

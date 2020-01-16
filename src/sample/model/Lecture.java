@@ -1,8 +1,16 @@
 package sample.model;
 
+import sample.model.binding.BidiMapAdapter;
+import sample.model.binding.InstantAdapter;
+
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement(name = "Lecture")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Lecture {
     public String getTitle() {
         return title;
@@ -24,10 +32,26 @@ public class Lecture {
         return end;
     }
 
+    @XmlAttribute(name = "title")
     private String title;
+
+    @XmlElement(name = "Author")
+    @XmlIDREF
     private List<Author> authors;
+
+    @XmlElement(name = "Location")
+    @XmlIDREF
     private Location location;
-    private Instant start, end;
+
+    @XmlAttribute(name = "start")
+    @XmlJavaTypeAdapter(InstantAdapter.class)
+    private Instant start;
+
+    @XmlAttribute(name = "end")
+    @XmlJavaTypeAdapter(InstantAdapter.class)
+    private Instant end;
+
+    public Lecture() { }
 
     public Lecture(String title, List<Author> authors, Location location, Instant start, Instant end) {
         this.title = title;
