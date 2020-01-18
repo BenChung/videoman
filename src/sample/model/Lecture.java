@@ -43,6 +43,12 @@ public class Lecture {
     @XmlIDREF
     private Location location;
 
+    @XmlElement(name = "ytid")
+    private String ytId = null;
+
+    @XmlElement(name = "metadata")
+    private boolean metadata = false;
+
     @XmlAttribute(name = "start")
     @XmlJavaTypeAdapter(InstantAdapter.class)
     private Instant start;
